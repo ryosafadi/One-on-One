@@ -1,0 +1,50 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInEditor": 4
+        },
+        "#classic_roguelike_pico8": {
+            "scaleInDock": 3
+        },
+        "OneOnOneArena.tmx": {
+            "scale": 4,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 117.25,
+                "y": 138.375
+            }
+        },
+        "OneOnOneArena.tmx#colored_tilemap_packed": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        }
+    },
+    "last.exportedFilePath": "C:/Users/r2saf/Downloads/School/CMPM 120/One on One/assets",
+    "last.imagePath": "C:/Users/r2saf/Downloads/School/CMPM 120/One on One/assets",
+    "map.height": 30,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "openFiles": [
+        "OneOnOneArena.tmx"
+    ],
+    "project": "OneOnOneArena.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "OneOnOneArena.tmx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}
