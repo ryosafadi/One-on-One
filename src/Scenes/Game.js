@@ -8,8 +8,6 @@ class Game extends Phaser.Scene {
         this.SCALE = 3.0;
         this.TILEWIDTH = 16;
         this.TILEHEIGHT = 10;
-        this.playerX = game.config.width / 2 / this.SCALE;
-        this.playerY = game.config.height / 2 / this.SCALE;
         this.playerSpeed = 70; // Adjust the speed for velocity
     }
 
@@ -30,6 +28,8 @@ class Game extends Phaser.Scene {
             }
         });
 
+        this.playerX = this.map.widthInPixels / 2;
+        this.playerY = 3* this.map.heightInPixels / 4;
         my.sprite.player = this.physics.add.sprite(this.playerX, this.playerY).play("idleAnim");
         my.sprite.player.body.setSize(my.sprite.player.body.width/4, my.sprite.player.body.height/4);
         my.sprite.player.body.setCollideWorldBounds(true);
@@ -55,7 +55,7 @@ class Game extends Phaser.Scene {
             else if (this.sKey.isDown) my.sprite.player.body.setVelocityY(this.playerSpeed);
             else my.sprite.player.body.setVelocityY(0);
 
-            if (my.sprite.player.anims.currentAnim.key != "horiWalk") my.sprite.player.play("horiWalk");
+            if (my.sprite.player.anims.currentAnim.key != "horiWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("horiWalk");
         }
         else if(this.dKey.isDown){
             my.sprite.player.body.setVelocityX(this.playerSpeed);
@@ -63,21 +63,25 @@ class Game extends Phaser.Scene {
             else if (this.sKey.isDown) my.sprite.player.body.setVelocityY(this.playerSpeed);
             else my.sprite.player.body.setVelocityY(0);
 
-            if (my.sprite.player.anims.currentAnim.key != "horiWalk") my.sprite.player.play("horiWalk");
+            if (my.sprite.player.anims.currentAnim.key != "horiWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("horiWalk");
         }
         else if(this.wKey.isDown){
             my.sprite.player.body.setVelocity(0);
             my.sprite.player.body.setVelocityY(-this.playerSpeed);
-            if (my.sprite.player.anims.currentAnim.key != "vertWalk") my.sprite.player.play("vertWalk");
+            if (my.sprite.player.anims.currentAnim.key != "vertWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("vertWalk");
         }
         else if(this.sKey.isDown){
             my.sprite.player.body.setVelocity(0);
             my.sprite.player.body.setVelocityY(this.playerSpeed);
-            if (my.sprite.player.anims.currentAnim.key != "vertWalk") my.sprite.player.play("vertWalk");
+            if (my.sprite.player.anims.currentAnim.key != "vertWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("vertWalk");
         }
         else{
             my.sprite.player.body.setVelocity(0);
-            my.sprite.player.play("idleAnim");
+            if(!game.input.activePointer.leftButtonDown()) my.sprite.player.play("idleAnim");
+        }
+
+        if(game.input.activePointer.leftButtonDown()){
+            if (my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("attack");
         }
     }
 }

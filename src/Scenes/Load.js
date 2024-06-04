@@ -48,6 +48,16 @@ class Load extends Phaser.Scene {
             duration: 300,
             repeat: -1
         });
+
+        this.anims.create({
+            key: 'attack',
+            frames: [
+                {key: "attack1"},
+                {key: "attack2"}
+            ],
+            duration: 300,
+            repeat: -1
+        });
     
         // ...and pass to the next Scene
         this.scene.start("gameScene");
