@@ -63,7 +63,7 @@ class Game extends Phaser.Scene {
              loop: true
          });
         // this is a pretty basic collision handler
-        this.physics.add.overlap(this.bullets, my.sprite.player, this.handlePlayerHit, null, this);
+        this.physics.add.overlap( my.sprite.player,this.bullets, this.handlePlayerHit, null, this);
     
         this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
         this.hitOverlay.setVisible(false);
@@ -132,8 +132,10 @@ class Game extends Phaser.Scene {
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
         this.hitSound.play();
+        player.setAlpha(0.2);
         this.hitOverlay.on('animationcomplete', () => {
             this.hitOverlay.setVisible(false);
+            player.setAlpha(1);
         }, this);
     }
 }
