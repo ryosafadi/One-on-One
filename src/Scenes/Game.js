@@ -46,8 +46,29 @@ class Game extends Phaser.Scene {
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    }
 
+         this.turret = this.physics.add.sprite(200, 200, 'turret');
+         this.turret.setImmovable(true);
+ 
+         //turret bullets
+         this.bullets = this.physics.add.group({
+             defaultKey: 'turretbullet',
+             maxSize: 10
+         });
+ 
+         this.time.addEvent({
+             delay: 3000,
+             callback: this.shootBullet,
+             callbackScope: this,
+             loop: true
+         });
+        // this is a pretty basic collision handler
+        this.physics.add.overlap(this.bullets, my.sprite.player, this.handlePlayerHit, null, this);
+    
+        this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
+        this.hitOverlay.setVisible(false);
+        this.hitSound = this.sound.add('impsound');
+    }
     update() {
         if(this.aKey.isDown){
             my.sprite.player.body.setVelocityX(-this.playerSpeed);
@@ -83,5 +104,36 @@ class Game extends Phaser.Scene {
         if(game.input.activePointer.leftButtonDown()){
             if (my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("attack");
         }
+        this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
+        
+    }
+//for the turret, can be copied for other things.
+    shootBullet() {
+        const bullet = this.bullets.get(this.turret.x, this.turret.y);
+        if (bullet) {
+            bullet.setActive(true);
+            bullet.setVisible(true);
+            bullet.body.velocity.y = 300; //this just shoots straight down, but we can make it track the player too
+            bullet.body.setCollideWorldBounds(true);
+            bullet.body.onWorldBounds = true;
+            bullet.body.world.on('worldbounds', (body) => {
+                if (body.gameObject === bullet) {
+                    bullet.setActive(false);
+                    bullet.setVisible(false);
+                }
+            });
+        }
+    }
+    //for some reason this player hit handler will delete the player if i
+    //don't leave player in the front.... not sure why, but whatever it works like this.
+    handlePlayerHit(player, bullet) {
+        bullet.setActive(false);
+        bullet.setVisible(false);
+        this.hitOverlay.setVisible(true);
+        this.hitOverlay.play('hit', true);
+        this.hitSound.play();
+        this.hitOverlay.on('animationcomplete', () => {
+            this.hitOverlay.setVisible(false);
+        }, this);
     }
 }
