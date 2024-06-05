@@ -107,13 +107,15 @@ class Game extends Phaser.Scene {
         }
 
         if(game.input.activePointer.leftButtonDown()){
-            if (my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("attack");
+            if (my.sprite.player.anims.currentAnim.key != "attack") {
+            my.sprite.player.play("attack");
             //this.slashOverlay.setRotation(slashAngle);
             this.slashOverlay.setVisible(true);
             this.slashOverlay.anims.play('slash', true);
             this.slashOverlay.on('animationcomplete', () => {
                 this.slashOverlay.setVisible(false);
             }, this);
+        }
         }
         this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
         this.slashOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);

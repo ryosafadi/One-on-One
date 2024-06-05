@@ -62,8 +62,8 @@ class Load extends Phaser.Scene {
                 {key: "attack1"},
                 {key: "attack2"}
             ],
-            duration: 300,
-            repeat: -1
+            duration: 150,
+            repeat: 0
         });
         this.anims.create({
             key: 'hit',
