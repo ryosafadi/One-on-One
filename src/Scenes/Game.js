@@ -27,7 +27,8 @@ class Game extends Phaser.Scene {
                 tile.setCollision(true);
             }
         });
-
+        this.slashOverlay = this.add.sprite(this.playerX, this.playerY, 'slash').setScale(0.05,0.15);
+        this.slashOverlay.setVisible(false);
         this.playerX = this.map.widthInPixels / 2;
         this.playerY = 3* this.map.heightInPixels / 4;
         my.sprite.player = this.physics.add.sprite(this.playerX, this.playerY).play("idleAnim");
@@ -70,6 +71,10 @@ class Game extends Phaser.Scene {
         this.hitSound = this.sound.add('impsound');
     }
     update() {
+        //there is something wrong with this math, it's not quiiiite following the mouse perfectly
+        let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
+        this.slashOverlay.setRotation(slashAngle - Math.PI/2);
+        //halp
         if(this.aKey.isDown){
             my.sprite.player.body.setVelocityX(-this.playerSpeed);
             if (this.wKey.isDown) my.sprite.player.body.setVelocityY(-this.playerSpeed);
@@ -103,8 +108,15 @@ class Game extends Phaser.Scene {
 
         if(game.input.activePointer.leftButtonDown()){
             if (my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("attack");
+            //this.slashOverlay.setRotation(slashAngle);
+            this.slashOverlay.setVisible(true);
+            this.slashOverlay.anims.play('slash', true);
+            this.slashOverlay.on('animationcomplete', () => {
+                this.slashOverlay.setVisible(false);
+            }, this);
         }
         this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
+        this.slashOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
         
     }
 //for the turret, can be copied for other things.
