@@ -29,6 +29,10 @@ class Game extends Phaser.Scene {
         });
         this.slashOverlay = this.add.sprite(this.playerX, this.playerY, 'slash').setScale(0.05,0.15);
         this.slashOverlay.setVisible(false);
+        this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
+        this.hitOverlay.setVisible(false);
+        this.hitSound = this.sound.add('impsound');
+
         this.playerX = this.map.widthInPixels / 2;
         this.playerY = 3* this.map.heightInPixels / 4;
         my.sprite.player = this.physics.add.sprite(this.playerX, this.playerY).play("idleAnim");
@@ -65,14 +69,11 @@ class Game extends Phaser.Scene {
          });
         // this is a pretty basic collision handler
         this.physics.add.overlap( my.sprite.player,this.bullets, this.handlePlayerHit, null, this);
-    
-        this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
-        this.hitOverlay.setVisible(false);
-        this.hitSound = this.sound.add('impsound');
     }
     update() {
         //there is something wrong with this math, it's not quiiiite following the mouse perfectly
-        let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
+        //edit: jk i fixed it, stupid camera
+        let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y+100, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
         this.slashOverlay.setRotation(slashAngle - Math.PI/2);
         //halp
         if(this.aKey.isDown){
