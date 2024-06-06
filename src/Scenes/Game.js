@@ -53,7 +53,7 @@ class Game extends Phaser.Scene {
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
          this.turret = this.physics.add.sprite(200, 200, 'turret');
-         this.turret.setImmovable(true);
+         this.turret.setScale(5);
  
          //turret bullets
          this.bullets = this.physics.add.group({
