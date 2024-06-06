@@ -112,7 +112,7 @@ class Game extends Phaser.Scene {
             my.sprite.player.play("attack");
             //this.slashOverlay.setRotation(slashAngle);
             this.slashOverlay.setVisible(true);
-            this.slashOverlay.anims.play('slash', true);
+            this.slashOverlay.play('slash', true);
             this.slashOverlay.on('animationcomplete', () => {
                 this.slashOverlay.setVisible(false);
             }, this);
