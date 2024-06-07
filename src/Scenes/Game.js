@@ -27,7 +27,7 @@ class Game extends Phaser.Scene {
                 tile.setCollision(true);
             }
         });
-        this.slashOverlay = this.add.sprite(this.playerX, this.playerY, 'slash').setScale(0.05,0.15);
+        this.slashOverlay = this.add.sprite(this.playerX, this.playerY, 'slash').setScale(0.05,0.10);
         this.slashOverlay.setVisible(false);
         this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
         this.hitOverlay.setVisible(false);
@@ -52,13 +52,14 @@ class Game extends Phaser.Scene {
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-         this.turret = this.physics.add.sprite(200, 200, 'turret');
+         this.turret = this.physics.add.sprite(200, 150, 'turret');
          this.turret.setScale(5);
- 
+         this.turret.originalX = this.turret.x; // Store the original position
+         this.turret.originalY = this.turret.y;
          //turret bullets
          this.bullets = this.physics.add.group({
              defaultKey: 'turretbullet',
-             maxSize: 10
+             maxSize: 30
          });
  
          this.time.addEvent({
@@ -67,10 +68,18 @@ class Game extends Phaser.Scene {
              callbackScope: this,
              loop: true
          });
+
+         this.BossPhaseOneTimer = this.time.addEvent({
+            delay: 16,
+            callback: this.moveBossCircle,
+            callbackScope: this,
+            loop: true
+        });
         // this is a pretty basic collision handler
         this.physics.add.overlap( my.sprite.player,this.bullets, this.handlePlayerHit, null, this);
     }
     update() {
+        
         //there is something wrong with this math, it's not quiiiite following the mouse perfectly
         //edit: jk i fixed it, stupid camera
         let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y+100, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
@@ -122,13 +131,33 @@ class Game extends Phaser.Scene {
         this.slashOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
         
     }
+
+    moveBossCircle() {
+        const radius = 50; // Radius of the circular path
+        const speed = 0.0005; // Speed of the turret circle
+        const angle = this.time.now * speed;
+        const wiggleAmp = 0.1; // Amplitude of the wiggle
+        const wiggleFreq = 0.02; // Frequency of the wiggle
+
+        this.turret.x = this.turret.originalX + radius * Math.cos(angle);
+        this.turret.y = this.turret.originalY + radius * Math.sin(angle);
+        this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
+
+    }
+
 //for the turret, can be copied for other things.
-    shootBullet() {
+shootBullet() {
+    const coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
+    const bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
+
+    for (let i = 0; i < 5; i++) { // Shoot 5 bullets in a cone shape
+        const angle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y) + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
         const bullet = this.bullets.get(this.turret.x, this.turret.y);
+
         if (bullet) {
             bullet.setActive(true);
             bullet.setVisible(true);
-            bullet.body.velocity.y = 300; //this just shoots straight down, but we can make it track the player too
+            this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
             bullet.body.setCollideWorldBounds(true);
             bullet.body.onWorldBounds = true;
             bullet.body.world.on('worldbounds', (body) => {
@@ -139,6 +168,7 @@ class Game extends Phaser.Scene {
             });
         }
     }
+}
     //for some reason this player hit handler will delete the player if i
     //don't leave player in the front.... not sure why, but whatever it works like this.
     handlePlayerHit(player, bullet) {
