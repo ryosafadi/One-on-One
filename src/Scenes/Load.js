@@ -13,7 +13,9 @@ class Load extends Phaser.Scene {
         this.load.image("hori2", "hori2.png");
         this.load.image("attack1", "attack1.png");
         this.load.image("attack2", "attack2.png");
-        this.load.image("slash1", "slash.png");
+        this.load.image("slash1", "slash1.png");
+        this.load.image("slash2", "slash2.png");
+        this.load.image("slash3", "slash3.png");
         this.load.image("hit1", "hit1.png");
         this.load.image("hit2", "hit2.png");
         this.load.image("hit3", "hit3.png");
@@ -78,7 +80,9 @@ class Load extends Phaser.Scene {
         this.anims.create({
             key: 'slash',
             frames: [
-                {key: "slash1"}
+                {key: "slash1"},
+                {key: "slash2"},
+                {key: "slash3"}
             ],
             duration: 150,
             repeat: 0,
