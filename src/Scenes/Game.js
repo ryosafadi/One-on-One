@@ -59,11 +59,11 @@ class Game extends Phaser.Scene {
          //turret bullets
          this.bullets = this.physics.add.group({
              defaultKey: 'turretbullet',
-             maxSize: 30
+             maxSize: 100
          });
  
          this.time.addEvent({
-             delay: 3000,
+             delay: 2000,
              callback: this.shootBullet,
              callbackScope: this,
              loop: true
@@ -149,24 +149,30 @@ class Game extends Phaser.Scene {
 shootBullet() {
     const coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
     const bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
+    const sets = 3;
+    const bulletsPerSet = 5; 
+    const delayBetweenSets = 400; 
+    for (let set = 0; set < sets; set++) {
+        this.time.delayedCall(set * delayBetweenSets, () => {
+            for (let i = 0; i < bulletsPerSet; i++) {
+                const angle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y) + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
+                const bullet = this.bullets.get(this.turret.x, this.turret.y);
 
-    for (let i = 0; i < 5; i++) { // Shoot 5 bullets in a cone shape
-        const angle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y) + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
-        const bullet = this.bullets.get(this.turret.x, this.turret.y);
-
-        if (bullet) {
-            bullet.setActive(true);
-            bullet.setVisible(true);
-            this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
-            bullet.body.setCollideWorldBounds(true);
-            bullet.body.onWorldBounds = true;
-            bullet.body.world.on('worldbounds', (body) => {
-                if (body.gameObject === bullet) {
-                    bullet.setActive(false);
-                    bullet.setVisible(false);
+                if (bullet) {
+                    bullet.setActive(true);
+                    bullet.setVisible(true);
+                    this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
+                    bullet.body.setCollideWorldBounds(true);
+                    bullet.body.onWorldBounds = true;
+                    bullet.body.world.on('worldbounds', (body) => {
+                        if (body.gameObject === bullet) {
+                            bullet.setActive(false);
+                            bullet.setVisible(false);
+                        }
+                    });
                 }
-            });
-        }
+            }
+        }, this);
     }
 }
     //for some reason this player hit handler will delete the player if i
