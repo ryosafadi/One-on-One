@@ -142,7 +142,6 @@ class Game extends Phaser.Scene {
         this.turret.x = this.turret.originalX + radius * Math.cos(angle);
         this.turret.y = this.turret.originalY + radius * Math.sin(angle);
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
-
     }
 
 //for the turret, can be copied for other things.
@@ -150,13 +149,18 @@ shootBullet() {
     const coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
     const bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
     const sets = 3;
-    const bulletsPerSet = 5; 
+    const bulletsPerSet = 5;
     const delayBetweenSets = 400; 
     for (let set = 0; set < sets; set++) {
         this.time.delayedCall(set * delayBetweenSets, () => {
             for (let i = 0; i < bulletsPerSet; i++) {
-                const angle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y) + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
+                const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
+                const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
                 const bullet = this.bullets.get(this.turret.x, this.turret.y);
+
+                console.log(rawAngle);
+                if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
+                else this.turret.flipX = false;
 
                 if (bullet) {
                     bullet.setActive(true);
