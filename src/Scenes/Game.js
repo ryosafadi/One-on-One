@@ -125,7 +125,7 @@ class Game extends Phaser.Scene {
             this.slashOverlay.play('slash', true);
             this.slashOverlay.on('animationcomplete', () => {
                 this.slashOverlay.setVisible(false);
-                this.slashOverlay.setPosition(-100, -100);
+                this.slashOverlay.setPosition(-350, -350);
             }, this);
         }
         }
