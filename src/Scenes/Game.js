@@ -157,7 +157,7 @@ shootBullet() {
             for (let i = 0; i < bulletsPerSet; i++) {
                 const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
                 const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
-                const bullet = this.bullets.get(this.turret.x, this.turret.y);
+                const bullet = this.bullets.get(this.turret.x, this.turret.y+10);
 
                 console.log(rawAngle);
                 if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
