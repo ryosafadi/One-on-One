@@ -9,6 +9,7 @@ class Game extends Phaser.Scene {
         this.TILEWIDTH = 16;
         this.TILEHEIGHT = 10;
         this.playerSpeed = 70; // Adjust the speed for velocity
+        this.playerHealth = 100;
     }
 
     preload() {
@@ -47,6 +48,11 @@ class Game extends Phaser.Scene {
         this.cameras.main.startFollow(my.sprite.player);
         this.cameras.main.followOffset.set(0, 50);
 
+        my.sprite.heart = this.add.sprite(270, 500, "heart").setOrigin(0, 0);
+        my.sprite.heart.setScale(5);
+        my.sprite.heart.depth = 10;
+        my.sprite.heart.setScrollFactor(0, 0);
+
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -76,7 +82,7 @@ class Game extends Phaser.Scene {
             loop: true
         });
         // this is a pretty basic collision handler
-        this.physics.add.overlap( my.sprite.player,this.bullets, this.handlePlayerHit, null, this);
+        this.physics.add.overlap(my.sprite.player, this.bullets, this.handlePlayerHit, null, this);
     }
     update() {
         
@@ -158,7 +164,6 @@ shootBullet() {
                 const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
                 const bullet = this.bullets.get(this.turret.x, this.turret.y);
 
-                console.log(rawAngle);
                 if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
                 else this.turret.flipX = false;
 
