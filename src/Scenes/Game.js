@@ -117,6 +117,7 @@ class Game extends Phaser.Scene {
         }
 
         if(game.input.activePointer.leftButtonDown()){
+            this.slashOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
             if (my.sprite.player.anims.currentAnim.key != "attack") {
             my.sprite.player.play("attack");
             //this.slashOverlay.setRotation(slashAngle);
@@ -124,11 +125,11 @@ class Game extends Phaser.Scene {
             this.slashOverlay.play('slash', true);
             this.slashOverlay.on('animationcomplete', () => {
                 this.slashOverlay.setVisible(false);
+                this.slashOverlay.setPosition(-100, -100);
             }, this);
         }
         }
         this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
-        this.slashOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
         
     }
 
@@ -186,6 +187,7 @@ shootBullet() {
     handlePlayerHit(player, bullet) {
         bullet.setActive(false);
         bullet.setVisible(false);
+        bullet.setPosition(-300, -300);
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
         this.hitSound.play();
