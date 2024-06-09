@@ -162,6 +162,8 @@ shootBullet() {
                     bullet.setActive(true);
                     bullet.setVisible(true);
                     this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
+                    
+                    bullet.rotation = angle - Math.PI / 2;
                     bullet.body.setCollideWorldBounds(true);
                     bullet.body.onWorldBounds = true;
                     bullet.body.world.on('worldbounds', (body) => {
