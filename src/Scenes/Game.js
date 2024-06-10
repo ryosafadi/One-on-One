@@ -10,6 +10,7 @@ class Game extends Phaser.Scene {
         this.TILEHEIGHT = 10;
         this.playerSpeed = 70; // Adjust the speed for velocity
         this.playerHealth = 100;
+        this.maxPlayerHealth = 100;
     }
 
     preload() {
@@ -48,10 +49,26 @@ class Game extends Phaser.Scene {
         this.cameras.main.startFollow(my.sprite.player);
         this.cameras.main.followOffset.set(0, 50);
 
-        my.sprite.heart = this.add.sprite(270, 500, "heart").setOrigin(0, 0);
-        my.sprite.heart.setScale(5);
-        my.sprite.heart.depth = 10;
-        my.sprite.heart.setScrollFactor(0, 0);
+        my.sprite.heartOuter = this.add.sprite(270, 488, "heartOuter").setOrigin(0, 0);
+        my.sprite.heartOuter.setScale(7);
+        my.sprite.heartOuter.depth = 10;
+        my.sprite.heartOuter.setScrollFactor(0, 0);
+
+        my.sprite.heartInner = this.add.sprite(277, 488, "heartInner").setOrigin(0, 0);
+        my.sprite.heartInner.setScale(7);
+        my.sprite.heartInner.depth = 11;
+        my.sprite.heartInner.setScrollFactor(0);
+
+        let healthStyle = { 
+            fontSize: 10,
+            color: 'White',
+            fontFamily: 'Verdana',
+            align: "left"
+        };
+
+        my.text.health = this.add.bitmapText(297.5, 510.4, "pixellari", this.playerHealth).setOrigin(0.5, 0.5);
+        my.text.health.depth = 12;
+        my.text.health.setScrollFactor(0);
 
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -83,9 +100,12 @@ class Game extends Phaser.Scene {
         });
         // this is a pretty basic collision handler
         this.physics.add.overlap(my.sprite.player, this.bullets, this.handlePlayerHit, null, this);
+
+        console.log(this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width);
     }
     update() {
-        
+        my.sprite.heartInner.setCrop(0, 0, this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width, 8);
+
         //there is something wrong with this math, it's not quiiiite following the mouse perfectly
         //edit: jk i fixed it, stupid camera
         let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y+100, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
@@ -189,6 +209,7 @@ shootBullet() {
     handlePlayerHit(player, bullet) {
         bullet.setActive(false);
         bullet.setVisible(false);
+        this.playerHealth -= 10;
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
         this.hitSound.play();

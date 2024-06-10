@@ -21,8 +21,11 @@ class Load extends Phaser.Scene {
         this.load.image("hit3", "hit3.png");
         this.load.image("turret", "turret.png");
         this.load.image("turretbullet", "turretbullet.png");
-        this.load.image("heart", "heart.png");
+        this.load.image("heartOuter", "heartOuter.png");
+        this.load.image("heartInner", "heartInner.png");
         this.load.audio('impsound', 'impsound.ogg');
+
+        this.load.bitmapFont("pixellari", "pixellari.png", "pixellari.fnt");
         
 
         // Load tilemap information
