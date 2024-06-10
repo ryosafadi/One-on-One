@@ -21,6 +21,6 @@ let config = {
     scene: [Load, Game]
 }
 
-var my = {sprite: {}};
+var my = {sprite: {}, text: {}};
 
 const game = new Phaser.Game(config);

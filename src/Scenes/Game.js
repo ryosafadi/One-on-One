@@ -9,6 +9,8 @@ class Game extends Phaser.Scene {
         this.TILEWIDTH = 16;
         this.TILEHEIGHT = 10;
         this.playerSpeed = 70; // Adjust the speed for velocity
+        this.playerHealth = 100;
+        this.maxPlayerHealth = 100;
     }
 
     preload() {
@@ -47,6 +49,27 @@ class Game extends Phaser.Scene {
         this.cameras.main.startFollow(my.sprite.player);
         this.cameras.main.followOffset.set(0, 50);
 
+        my.sprite.heartOuter = this.add.sprite(270, 488, "heartOuter").setOrigin(0, 0);
+        my.sprite.heartOuter.setScale(7);
+        my.sprite.heartOuter.depth = 10;
+        my.sprite.heartOuter.setScrollFactor(0, 0);
+
+        my.sprite.heartInner = this.add.sprite(277, 488, "heartInner").setOrigin(0, 0);
+        my.sprite.heartInner.setScale(7);
+        my.sprite.heartInner.depth = 11;
+        my.sprite.heartInner.setScrollFactor(0);
+
+        let healthStyle = { 
+            fontSize: 10,
+            color: 'White',
+            fontFamily: 'Verdana',
+            align: "left"
+        };
+
+        my.text.health = this.add.bitmapText(297.5, 510.4, "pixellari", this.playerHealth).setOrigin(0.5, 0.5);
+        my.text.health.depth = 12;
+        my.text.health.setScrollFactor(0);
+
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -76,10 +99,14 @@ class Game extends Phaser.Scene {
             loop: true
         });
         // this is a pretty basic collision handler
-        this.physics.add.overlap( my.sprite.player,this.bullets, this.handlePlayerHit, null, this);
+        this.physics.add.overlap(my.sprite.player, this.bullets, this.handlePlayerHit, null, this);
+
+        console.log(this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width);
     }
     update() {
-        
+        my.sprite.heartInner.setCrop(0, 0, this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width, 8);
+        my.text.health.text = this.playerHealth;
+
         //there is something wrong with this math, it's not quiiiite following the mouse perfectly
         //edit: jk i fixed it, stupid camera
         let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y+100, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
@@ -159,7 +186,6 @@ shootBullet() {
                 const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
                 const bullet = this.bullets.get(this.turret.x, this.turret.y+10);
 
-                console.log(rawAngle);
                 if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
                 else this.turret.flipX = false;
 
@@ -188,6 +214,7 @@ shootBullet() {
         bullet.setActive(false);
         bullet.setVisible(false);
         bullet.setPosition(-300, -300);
+        this.playerHealth -= 10;
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
         this.hitSound.play();
