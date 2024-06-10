@@ -105,6 +105,7 @@ class Game extends Phaser.Scene {
     }
     update() {
         my.sprite.heartInner.setCrop(0, 0, this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width, 8);
+        my.text.health.text = this.playerHealth;
 
         //there is something wrong with this math, it's not quiiiite following the mouse perfectly
         //edit: jk i fixed it, stupid camera
@@ -150,6 +151,7 @@ class Game extends Phaser.Scene {
             this.slashOverlay.play('slash', true);
             this.slashOverlay.on('animationcomplete', () => {
                 this.slashOverlay.setVisible(false);
+                this.slashOverlay.setPosition(-350, -350);
             }, this);
         }
         }
@@ -182,7 +184,7 @@ shootBullet() {
             for (let i = 0; i < bulletsPerSet; i++) {
                 const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
                 const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
-                const bullet = this.bullets.get(this.turret.x, this.turret.y);
+                const bullet = this.bullets.get(this.turret.x, this.turret.y + 10);
 
                 if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
                 else this.turret.flipX = false;
@@ -191,6 +193,7 @@ shootBullet() {
                     bullet.setActive(true);
                     bullet.setVisible(true);
                     this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
+                    bullet.rotation = angle - Math.PI / 2;
                     bullet.body.setCollideWorldBounds(true);
                     bullet.body.onWorldBounds = true;
                     bullet.body.world.on('worldbounds', (body) => {
@@ -209,6 +212,7 @@ shootBullet() {
     handlePlayerHit(player, bullet) {
         bullet.setActive(false);
         bullet.setVisible(false);
+        bullet.setPosition(-300, -300);
         this.playerHealth -= 10;
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
