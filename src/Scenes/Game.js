@@ -11,6 +11,8 @@ class Game extends Phaser.Scene {
         this.playerSpeed = 70; // Adjust the speed for velocity
         this.playerHealth = 100;
         this.maxPlayerHealth = 100;
+        this.bossHealth = 100;
+        this.maxBossHealth = 100;
     }
 
     preload() {
@@ -59,40 +61,49 @@ class Game extends Phaser.Scene {
         my.sprite.heartInner.depth = 11;
         my.sprite.heartInner.setScrollFactor(0);
 
-        let healthStyle = { 
-            fontSize: 10,
-            color: 'White',
-            fontFamily: 'Verdana',
-            align: "left"
-        };
+        my.text.playerHealth = this.add.bitmapText(297.5, 510.4, "pixellari", this.playerHealth).setOrigin(0.5, 0.5);
+        my.text.playerHealth.depth = 12;
+        my.text.playerHealth.setScrollFactor(0);
 
-        my.text.health = this.add.bitmapText(297.5, 510.4, "pixellari", this.playerHealth).setOrigin(0.5, 0.5);
-        my.text.health.depth = 12;
-        my.text.health.setScrollFactor(0);
+        this.bossHealthOutline = this.drawBar(299, 269, 202, 8, 0xc2c2d1);
+        this.bossHealthOutline.depth = 10;
+        this.bossHealthOutline.setScrollFactor(0);
+
+        this.bossHealthBG = this.drawBar(300, 270, 200, 6, 0x222323);
+        this.bossHealthBG.depth = 11;
+        this.bossHealthBG.setScrollFactor(0);
+
+        this.bossHealthBar = this.drawBar(300, 270, 200, 6, 0xeb564b);
+        this.bossHealthBar.depth = 12;
+        this.bossHealthBar.setScrollFactor(0);
+
+        my.text.bossHealth = this.add.bitmapText(400, 273.5, "pixellari", "Giant Crab").setFontSize(6).setOrigin(0.5, 0.5);
+        my.text.bossHealth.depth = 13;
+        my.text.bossHealth.setScrollFactor(0);
 
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-         this.turret = this.physics.add.sprite(200, 150, 'turret');
-         this.turret.setScale(5);
-         this.turret.originalX = this.turret.x; // Store the original position
-         this.turret.originalY = this.turret.y;
-         //turret bullets
-         this.bullets = this.physics.add.group({
-             defaultKey: 'turretbullet',
-             maxSize: 100
-         });
+        this.turret = this.physics.add.sprite(200, 150, 'turret');
+        this.turret.setScale(5);
+        this.turret.originalX = this.turret.x; // Store the original position
+        this.turret.originalY = this.turret.y;
+        //turret bullets
+        this.bullets = this.physics.add.group({
+            defaultKey: 'turretbullet',
+            maxSize: 100
+        });
  
-         this.time.addEvent({
-             delay: 2000,
-             callback: this.shootBullet,
-             callbackScope: this,
-             loop: true
-         });
+        this.time.addEvent({
+            delay: 2000,
+            callback: this.shootBullet,
+            callbackScope: this,
+            loop: true
+        });
 
-         this.BossPhaseOneTimer = this.time.addEvent({
+        this.BossPhaseOneTimer = this.time.addEvent({
             delay: 16,
             callback: this.moveBossCircle,
             callbackScope: this,
@@ -105,7 +116,9 @@ class Game extends Phaser.Scene {
     }
     update() {
         my.sprite.heartInner.setCrop(0, 0, this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width, 8);
-        my.text.health.text = this.playerHealth;
+        my.text.playerHealth.text = this.playerHealth;
+
+        this.bossHealthBar.scaleX = this.bossHealth / this.maxBossHealth;
 
         //there is something wrong with this math, it's not quiiiite following the mouse perfectly
         //edit: jk i fixed it, stupid camera
@@ -160,6 +173,17 @@ class Game extends Phaser.Scene {
         
     }
 
+    drawBar(x, y, width, height, color){
+        let bar = this.add.graphics();
+        bar.fillStyle(color, 1);
+        bar.fillRect(0, 0, width, height);
+
+        bar.x = x;
+        bar.y = y;
+
+        return bar;
+    }
+
     moveBossCircle() {
         const radius = 50; // Radius of the circular path
         const speed = 0.0005; // Speed of the turret circle
@@ -172,42 +196,43 @@ class Game extends Phaser.Scene {
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
     }
 
-//for the turret, can be copied for other things.
-shootBullet() {
-    const coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
-    const bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
-    const sets = 3;
-    const bulletsPerSet = 5;
-    const delayBetweenSets = 400; 
-    for (let set = 0; set < sets; set++) {
-        this.time.delayedCall(set * delayBetweenSets, () => {
-            for (let i = 0; i < bulletsPerSet; i++) {
-                const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
-                const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
-                const bullet = this.bullets.get(this.turret.x, this.turret.y+10);
+    //for the turret, can be copied for other things.
+    shootBullet() {
+        const coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
+        const bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
+        const sets = 3;
+        const bulletsPerSet = 5;
+        const delayBetweenSets = 400; 
+        for (let set = 0; set < sets; set++) {
+            this.time.delayedCall(set * delayBetweenSets, () => {
+                for (let i = 0; i < bulletsPerSet; i++) {
+                    const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
+                    const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
+                    const bullet = this.bullets.get(this.turret.x, this.turret.y+10);
 
-                if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
-                else this.turret.flipX = false;
+                    if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
+                    else this.turret.flipX = false;
 
-                if (bullet) {
-                    bullet.setActive(true);
-                    bullet.setVisible(true);
-                    this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
-                    
-                    bullet.rotation = angle - Math.PI / 2;
-                    bullet.body.setCollideWorldBounds(true);
-                    bullet.body.onWorldBounds = true;
-                    bullet.body.world.on('worldbounds', (body) => {
-                        if (body.gameObject === bullet) {
-                            bullet.setActive(false);
-                            bullet.setVisible(false);
-                        }
-                    });
+                    if (bullet) {
+                        bullet.setActive(true);
+                        bullet.setVisible(true);
+                        this.physics.velocityFromRotation(angle, bulletSpeed, bullet.body.velocity);
+                        
+                        bullet.rotation = angle - Math.PI / 2;
+                        bullet.body.setCollideWorldBounds(true);
+                        bullet.body.onWorldBounds = true;
+                        bullet.body.world.on('worldbounds', (body) => {
+                            if (body.gameObject === bullet) {
+                                bullet.setActive(false);
+                                bullet.setVisible(false);
+                            }
+                        });
+                    }
                 }
-            }
-        }, this);
+            }, this);
+        }
     }
-}
+
     //for some reason this player hit handler will delete the player if i
     //don't leave player in the front.... not sure why, but whatever it works like this.
     handlePlayerHit(player, bullet) {
