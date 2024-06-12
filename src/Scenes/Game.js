@@ -13,6 +13,9 @@ class Game extends Phaser.Scene {
         this.maxPlayerHealth = 100;
         this.bossHealth = 100;
         this.maxBossHealth = 100;
+        this.slashCooldown = 0;
+        this.slashTime = 0;
+        this.target = new Phaser.Math.Vector2();
     }
 
     preload() {
@@ -31,14 +34,13 @@ class Game extends Phaser.Scene {
                 tile.setCollision(true);
             }
         });
-        this.slashOverlay = this.add.sprite(this.playerX, this.playerY, 'slash').setScale(0.05,0.10);
-        this.slashOverlay.setVisible(false);
+
         this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
         this.hitOverlay.setVisible(false);
         this.hitSound = this.sound.add('impsound');
 
         this.playerX = this.map.widthInPixels / 2;
-        this.playerY = 3* this.map.heightInPixels / 4;
+        this.playerY = 3 * this.map.heightInPixels / 4;
         my.sprite.player = this.physics.add.sprite(this.playerX, this.playerY).play("idleAnim");
         my.sprite.player.body.setSize(my.sprite.player.body.width/4, my.sprite.player.body.height/4);
         my.sprite.player.body.setCollideWorldBounds(true);
@@ -50,6 +52,9 @@ class Game extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.startFollow(my.sprite.player);
         this.cameras.main.followOffset.set(0, 50);
+
+        my.sprite.slash = this.physics.add.sprite(-350, -350, 'slash').setScale(0.05,0.10);
+        my.sprite.slash.setVisible(false);
 
         my.sprite.heartOuter = this.add.sprite(270, 488, "heartOuter").setOrigin(0, 0);
         my.sprite.heartOuter.setScale(7);
@@ -81,6 +86,8 @@ class Game extends Phaser.Scene {
         my.text.bossHealth.depth = 13;
         my.text.bossHealth.setScrollFactor(0);
 
+        this.input.setPollAlways();
+
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -90,6 +97,7 @@ class Game extends Phaser.Scene {
         this.turret.setScale(5);
         this.turret.originalX = this.turret.x; // Store the original position
         this.turret.originalY = this.turret.y;
+
         //turret bullets
         this.bullets = this.physics.add.group({
             defaultKey: 'turretbullet',
@@ -111,27 +119,34 @@ class Game extends Phaser.Scene {
         });
         // this is a pretty basic collision handler
         this.physics.add.overlap(my.sprite.player, this.bullets, this.handlePlayerHit, null, this);
-
-        console.log(this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width);
     }
-    update() {
+    update(time, delta) {
+        this.slashCooldown -= delta;
+        this.slashTime -= delta;
+        if(this.slashTime <= 0){
+            my.sprite.slash.setVisible(false);
+            my.sprite.slash.setPosition(-350, -350);
+        }
+
+        this.rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
+        if((this.rawAngle >= -Math.PI / 2  && this.rawAngle <= 0) || (this.rawAngle >= 0 && this.rawAngle <= Math.PI / 2)) this.turret.flipX = true;
+        else this.turret.flipX = false;
+
         my.sprite.heartInner.setCrop(0, 0, this.playerHealth / this.maxPlayerHealth * my.sprite.heartInner.width, 8);
         my.text.playerHealth.text = this.playerHealth;
 
         this.bossHealthBar.scaleX = this.bossHealth / this.maxBossHealth;
 
-        //there is something wrong with this math, it's not quiiiite following the mouse perfectly
-        //edit: jk i fixed it, stupid camera
-        let slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y+100, game.input.mousePointer.x + this.cameras.main.scrollX, game.input.mousePointer.y + this.cameras.main.scrollY);
-        this.slashOverlay.setRotation(slashAngle - Math.PI/2);
-        //halp
+        game.input.mousePointer.updateWorldPoint(this.cameras.main);
+        this.slashAngle = Phaser.Math.Angle.Between(my.sprite.player.x, my.sprite.player.y, game.input.mousePointer.worldX, game.input.mousePointer.worldY);
+        
         if(this.aKey.isDown){
             my.sprite.player.body.setVelocityX(-this.playerSpeed);
             if (this.wKey.isDown) my.sprite.player.body.setVelocityY(-this.playerSpeed);
             else if (this.sKey.isDown) my.sprite.player.body.setVelocityY(this.playerSpeed);
             else my.sprite.player.body.setVelocityY(0);
 
-            if (my.sprite.player.anims.currentAnim.key != "horiWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("horiWalk");
+            if (my.sprite.player.anims.currentAnim.key != "horiWalk" && my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("horiWalk");
         }
         else if(this.dKey.isDown){
             my.sprite.player.body.setVelocityX(this.playerSpeed);
@@ -139,38 +154,40 @@ class Game extends Phaser.Scene {
             else if (this.sKey.isDown) my.sprite.player.body.setVelocityY(this.playerSpeed);
             else my.sprite.player.body.setVelocityY(0);
 
-            if (my.sprite.player.anims.currentAnim.key != "horiWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("horiWalk");
+            if (my.sprite.player.anims.currentAnim.key != "horiWalk" && my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("horiWalk");
         }
         else if(this.wKey.isDown){
             my.sprite.player.body.setVelocity(0);
             my.sprite.player.body.setVelocityY(-this.playerSpeed);
-            if (my.sprite.player.anims.currentAnim.key != "vertWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("vertWalk");
+            if (my.sprite.player.anims.currentAnim.key != "vertWalk" && my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("vertWalk");
         }
         else if(this.sKey.isDown){
             my.sprite.player.body.setVelocity(0);
             my.sprite.player.body.setVelocityY(this.playerSpeed);
-            if (my.sprite.player.anims.currentAnim.key != "vertWalk" && !game.input.activePointer.leftButtonDown()) my.sprite.player.play("vertWalk");
+            if (my.sprite.player.anims.currentAnim.key != "vertWalk" && my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("vertWalk");
         }
         else{
             my.sprite.player.body.setVelocity(0);
-            if(!game.input.activePointer.leftButtonDown()) my.sprite.player.play("idleAnim");
+            if(my.sprite.player.anims.currentAnim.key != "attack") my.sprite.player.play("idleAnim");
         }
 
         if(game.input.activePointer.leftButtonDown()){
-            this.slashOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
-            if (my.sprite.player.anims.currentAnim.key != "attack") {
-            my.sprite.player.play("attack");
-            //this.slashOverlay.setRotation(slashAngle);
-            this.slashOverlay.setVisible(true);
-            this.slashOverlay.play('slash', true);
-            this.slashOverlay.on('animationcomplete', () => {
-                this.slashOverlay.setVisible(false);
-                this.slashOverlay.setPosition(-350, -350);
-            }, this);
+            if(this.slashCooldown <= 0){
+                my.sprite.player.play("attack");
+                my.sprite.player.on('animationcomplete', () => {
+                    my.sprite.player.play("idleAnim");
+                }, this);
+
+                this.slashCooldown = 600;
+                this.slashTime = 300;
+                my.sprite.slash.setPosition(my.sprite.player.x, my.sprite.player.y);
+                my.sprite.slash.setRotation(this.slashAngle - Math.PI/2);
+                my.sprite.slash.setVisible(true);
+                my.sprite.slash.setVelocity(Math.cos(this.slashAngle) * 200, Math.sin(this.slashAngle) * 200);
+            }
         }
-        }
+
         this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
-        
     }
 
     drawBar(x, y, width, height, color){
@@ -206,12 +223,12 @@ class Game extends Phaser.Scene {
         for (let set = 0; set < sets; set++) {
             this.time.delayedCall(set * delayBetweenSets, () => {
                 for (let i = 0; i < bulletsPerSet; i++) {
-                    const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
-                    const angle = rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
+                    //const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
+                    const angle = this.rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
                     const bullet = this.bullets.get(this.turret.x, this.turret.y+10);
 
-                    if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
-                    else this.turret.flipX = false;
+                    //if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
+                    //else this.turret.flipX = false;
 
                     if (bullet) {
                         bullet.setActive(true);
@@ -248,5 +265,13 @@ class Game extends Phaser.Scene {
             this.hitOverlay.setVisible(false);
             player.setAlpha(1);
         }, this);
+    }
+
+    playerAttack(){
+
+    }
+
+    handleBossHit(){
+
     }
 }
