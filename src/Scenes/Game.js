@@ -101,10 +101,10 @@ class Game extends Phaser.Scene {
         //turret bullets
         this.bullets = this.physics.add.group({
             defaultKey: 'turretbullet',
-            maxSize: 100
+            maxSize: 500
         });
- 
-        this.time.addEvent({
+
+        this.BossAttackTimer = this.time.addEvent({
             delay: 2000,
             callback: this.shootBullet,
             callbackScope: this,
@@ -191,29 +191,51 @@ class Game extends Phaser.Scene {
     }
 
     moveBossCircle() {
-        const radius = 50; // Radius of the circular path
+        let radius = 100; // Radius of the circular path
         const speed = 0.0005; // Speed of the turret circle
         const angle = this.time.now * speed;
         const wiggleAmp = 0.1; // Amplitude of the wiggle
         const wiggleFreq = 0.02; // Frequency of the wiggle
-
+        const wiggle = Math.sin(this.time.now * 0.03) * 4;
+        if (this.bossHealth<75)
+            {
+        if (radius>50)
+            {
+                radius-=20;
+            }
+        }
         this.turret.x = this.turret.originalX + radius * Math.cos(angle);
         this.turret.y = this.turret.originalY + radius * Math.sin(angle);
+        if (this.bossHealth<75)
+            {
+                this.turret.x = this.turret.originalX + radius * Math.cos(angle)+wiggle;
+                this.turret.y = this.turret.originalY + radius * Math.sin(angle)+wiggle;
+            }
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
     }
 
     //for the turret, can be copied for other things.
     shootBullet() {
-        const coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
-        const bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
-        const sets = 3;
-        const bulletsPerSet = 5;
-        const delayBetweenSets = 400; 
+        let coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
+        let bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
+        let sets = 3;
+        let bulletsPerSet = 5;
+        let delayBetweenSets = 400; 
+        if (this.bossHealth<75)
+            {
+            coneAngle= Phaser.Math.DegToRad(300);
+            sets = 1;
+            bulletsPerSet = 40;
+            }
         for (let set = 0; set < sets; set++) {
             this.time.delayedCall(set * delayBetweenSets, () => {
                 for (let i = 0; i < bulletsPerSet; i++) {
                     //const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
-                    const angle = this.rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
+                    let angle = this.rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
+                    if (this.bossHealth<75)
+                        {
+                            angle = Phaser.Math.DegToRad(Phaser.Math.Between(0, 360)+ Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2));
+                        }
                     const bullet = this.bullets.get(this.turret.x, this.turret.y+10);
 
                     //if((rawAngle >= -Math.PI / 2  && rawAngle <= 0) || (rawAngle >= 0 && rawAngle <= Math.PI / 2)) this.turret.flipX = true;
@@ -276,6 +298,6 @@ class Game extends Phaser.Scene {
         my.sprite.slash.setPosition(-300, -300);
         my.sprite.slash.setVisible(false);
         my.sprite.slash.setVelocity(0);
-        this.bossHealth -= 1;
+        this.bossHealth -= 5;
     }
 }
