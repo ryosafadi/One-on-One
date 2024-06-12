@@ -279,7 +279,7 @@ class Game extends Phaser.Scene {
         bullet.setActive(false);
         bullet.setVisible(false);
         bullet.setPosition(-300, -300);
-        this.playerHealth -= this.playerdmged;
+        this.playerHealth -= this.playerHitDamage;
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
         this.hitSound.play();
@@ -310,6 +310,6 @@ class Game extends Phaser.Scene {
         my.sprite.slash.setPosition(-300, -300);
         my.sprite.slash.setVisible(false);
         my.sprite.slash.setVelocity(0);
-        this.bossHealth -= this.bossdmged;
+        this.bossHealth -= this.bossHitDamage;
     }
 }
