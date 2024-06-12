@@ -87,7 +87,7 @@ class GameWin extends Phaser.Scene{
 
         if(game.input.activePointer.leftButtonDown()){
             this.sound.play("enter");
-            this.scene.switch("menuScene");
+            this.scene.start("menuScene");
         }
     }
 

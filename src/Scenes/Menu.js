@@ -78,30 +78,31 @@ class Menu extends Phaser.Scene {
         // Each button goes to a different scene
         playButton.on('selected', () => {
             console.log('play'); // Debug
+            this.buttons.pop(playButton);
+            this.buttons.pop(controlsButton);
+            this.buttons.pop(creditsButton);
             this.scene.stop("menuScene");
             this.scene.start("gameScene");
         });
 
         controlsButton.on('selected', () => {
             console.log('controls'); // Debug
-            
             this.scene.switch("controlsScene");
         });
 
         creditsButton.on('selected', () => {
             console.log('credits'); // Debug
-            
             this.scene.switch("creditsScene");
         });
 
         // Clean up events when the scene is destroyed
         this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-            playButton.off('selected');
-            controlsButton.off('selected');
-            creditsButton.off('selected');
-            this.wKey.destroy();
-            this.sKey.destroy();
-            this.enterKey.destroy();
+           playButton.off('selected');
+          controlsButton.off('selected');
+         creditsButton.off('selected');
+         this.wKey.destroy();
+          this.sKey.destroy();
+          this.enterKey.destroy();
         });
 
     }
@@ -169,8 +170,8 @@ class Menu extends Phaser.Scene {
         if(game.input.activePointer.leftButtonDown()){
             if (!this.enterKeyProcessed) {
                 this.sound.play("enter");
-                this.confirmSelection();
                 this.enterKeyProcessed = true;
+                this.confirmSelection();
             }
         } else {
             this.enterKeyProcessed = false;
