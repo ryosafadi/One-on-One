@@ -18,7 +18,9 @@ class Game extends Phaser.Scene {
         this.target = new Phaser.Math.Vector2();
 
         this.playerHitDamage = 10;
-        this.bossHitDamage = 1;
+        this.bossHitDamage = 10;
+        this.hasFlashed = false;
+        this.startPhase = false;
     }
 
     preload() {
@@ -209,7 +211,8 @@ class Game extends Phaser.Scene {
             this.startTime = this.time.now;
         }
         
-        if (this.bossHealth < 75) {
+        if (this.bossHealth < 75 ) {
+            this.time.removeEvent(this.BossAttackTimer);
             const elapsedTime = this.time.now - this.startTime;
             this.radius = Math.max(radiusMin, 100 - (elapsedTime * shrinkRate));
         }
@@ -220,7 +223,18 @@ class Game extends Phaser.Scene {
         if (this.bossHealth < 75) {
             this.turret.x += wobble;
             this.turret.y += wobble;
-            this.turret.play('change', true);
+            if(this.hasFlashed == false){
+                this.hasFlashed = true;
+                this.turret.play('change', true);
+                this.turret.on('animationcomplete', () => {
+                    this.Phase2AttackTimer = this.time.addEvent({
+                        delay: 800,
+                        callback: this.shootBullet,
+                        callbackScope: this,
+                        loop: true
+                    });
+                }, this);
+            }
         }
         
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
@@ -228,7 +242,7 @@ class Game extends Phaser.Scene {
 
     //for the turret, can be copied for other things.
     shootBullet() {
-        let coneAngle = Phaser.Math.DegToRad(45); // 45 degree cone, feel free to edit this, not sure what's a good feel
+        let coneAngle = Phaser.Math.DegToRad(100); // 45 degree cone, feel free to edit this, not sure what's a good feel
         let bulletSpeed = 50; // Bullet speed... seems a little too fast still not sure, need to tweak this too
         let sets = 3;
         let bulletsPerSet = 5;
