@@ -16,6 +16,9 @@ class Game extends Phaser.Scene {
         this.slashCooldown = 0;
         this.slashTime = 0;
         this.target = new Phaser.Math.Vector2();
+
+        this.playerdmged = 10;
+        this.bossdmged = 1;
     }
 
     preload() {
@@ -276,7 +279,7 @@ class Game extends Phaser.Scene {
         bullet.setActive(false);
         bullet.setVisible(false);
         bullet.setPosition(-300, -300);
-        this.playerHealth -= 10;
+        this.playerHealth -= this.playerdmged;
         this.hitOverlay.setVisible(true);
         this.hitOverlay.play('hit', true);
         this.hitSound.play();
@@ -307,6 +310,6 @@ class Game extends Phaser.Scene {
         my.sprite.slash.setPosition(-300, -300);
         my.sprite.slash.setVisible(false);
         my.sprite.slash.setVelocity(0);
-        this.bossHealth -= 5;
+        this.bossHealth -= this.bossdmged;
     }
 }
