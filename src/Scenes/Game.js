@@ -196,20 +196,20 @@ class Game extends Phaser.Scene {
         const angle = this.time.now * speed;
         const wiggleAmp = 0.1; // Amplitude of the wiggle
         const wiggleFreq = 0.02; // Frequency of the wiggle
-        const wiggle = Math.sin(this.time.now * 0.03) * 4;
+        const wobble = Math.sin(this.time.now * 0.03) * 4;
         if (this.bossHealth<75)
             {
         if (radius>50)
             {
-                radius-=20;
+                radius-=5;
             }
         }
         this.turret.x = this.turret.originalX + radius * Math.cos(angle);
         this.turret.y = this.turret.originalY + radius * Math.sin(angle);
         if (this.bossHealth<75)
             {
-                this.turret.x = this.turret.originalX + radius * Math.cos(angle)+wiggle;
-                this.turret.y = this.turret.originalY + radius * Math.sin(angle)+wiggle;
+                this.turret.x = this.turret.originalX + radius * Math.cos(angle)+wobble;
+                this.turret.y = this.turret.originalY + radius * Math.sin(angle)+wobble;
             }
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
     }
