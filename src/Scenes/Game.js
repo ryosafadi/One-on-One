@@ -191,26 +191,37 @@ class Game extends Phaser.Scene {
     }
 
     moveBossCircle() {
-        let radius = 100; // Radius of the circular path
+        const radiusMin = 25; // Minimum radius limit
         const speed = 0.0005; // Speed of the turret circle
         const angle = this.time.now * speed;
         const wiggleAmp = 0.1; // Amplitude of the wiggle
         const wiggleFreq = 0.02; // Frequency of the wiggle
         const wobble = Math.sin(this.time.now * 0.03) * 4;
-        if (this.bossHealth<75)
-            {
-        if (radius>50)
-            {
-                radius-=5;
-            }
+        const shrinkRate = 0.01; // Rate at which the radius shrinks per millisecond
+        
+        // Initialize radius and startTime if they don't exist
+        if (typeof this.radius === 'undefined') {
+            this.radius = 100;
         }
-        this.turret.x = this.turret.originalX + radius * Math.cos(angle);
-        this.turret.y = this.turret.originalY + radius * Math.sin(angle);
-        if (this.bossHealth<75)
-            {
-                this.turret.x = this.turret.originalX + radius * Math.cos(angle)+wobble;
-                this.turret.y = this.turret.originalY + radius * Math.sin(angle)+wobble;
-            }
+        if (typeof this.startTime === 'undefined' && this.bossHealth < 75) {
+            this.startTime = this.time.now;
+        }
+        
+        // Gradually shrink the radius if the boss health is below 75
+        if (this.bossHealth < 75) {
+            const elapsedTime = this.time.now - this.startTime;
+            this.radius = Math.max(radiusMin, 100 - (elapsedTime * shrinkRate));
+        }
+        
+        this.turret.x = this.turret.originalX + this.radius * Math.cos(angle);
+        this.turret.y = this.turret.originalY + this.radius * Math.sin(angle);
+    
+        if (this.bossHealth < 75) {
+            this.turret.x += wobble;
+            this.turret.y += wobble;
+            this.turret.play('change', true);
+        }
+        
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
     }
 

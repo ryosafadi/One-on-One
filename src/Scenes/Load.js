@@ -87,11 +87,9 @@ class Load extends Phaser.Scene {
             key: 'change',
             frames: [
                 {key: "turret"},
-                {key: "turret2"},
-                {key: "turret"},
                 {key: "turret2"}
             ],
-            duration: 150,
+            duration: 800,
             repeat: -1
         });
         /*this.anims.create({
