@@ -17,8 +17,8 @@ class Game extends Phaser.Scene {
         this.slashTime = 0;
         this.target = new Phaser.Math.Vector2();
 
-        this.playerdmged = 10;
-        this.bossdmged = 1;
+        this.playerHitDamage = 10;
+        this.bossHitDamage = 1;
     }
 
     preload() {
