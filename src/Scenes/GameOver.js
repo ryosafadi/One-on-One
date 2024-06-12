@@ -76,7 +76,7 @@ class GameOver extends Phaser.Scene{
 
     update(){
 
-        if (this.enterKey.isDown) {
+        if(game.input.activePointer.leftButtonDown()){
             this.sound.play("enter");
             this.scene.switch("menuScene");
         }

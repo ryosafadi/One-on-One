@@ -92,7 +92,7 @@ class Controls extends Phaser.Scene{
 
     update(){
 
-        if (this.enterKey.isDown) {
+        if(game.input.activePointer.leftButtonDown()){
             if (!this.enterKeyProcessed) {
                 this.sound.play("enter");
                 this.confirmSelection();

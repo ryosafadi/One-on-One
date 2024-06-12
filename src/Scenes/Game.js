@@ -317,7 +317,7 @@ class Game extends Phaser.Scene {
     }
 
     playerAttack(){
-    if(this.slashCooldown <= 0){
+        if(this.slashCooldown <= 0){
             my.sprite.player.play("attack");
             my.sprite.player.on('animationcomplete', () => {
                 my.sprite.player.play("idleAnim");
@@ -329,7 +329,7 @@ class Game extends Phaser.Scene {
             my.sprite.slash.setRotation(this.slashAngle - Math.PI/2);
             my.sprite.slash.setVisible(true);
             my.sprite.slash.setVelocity(Math.cos(this.slashAngle) * 200, Math.sin(this.slashAngle) * 200);
-    }
+        }
     }
 
     handleBossHit(){

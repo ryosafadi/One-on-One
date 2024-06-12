@@ -28,7 +28,6 @@ class Menu extends Phaser.Scene {
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-
         // Cursor
         this.buttonSelector = this.add.image(0, 0, 'cursor');
 
@@ -85,11 +84,13 @@ class Menu extends Phaser.Scene {
 
         controlsButton.on('selected', () => {
             console.log('controls'); // Debug
+            
             this.scene.switch("controlsScene");
         });
 
         creditsButton.on('selected', () => {
             console.log('credits'); // Debug
+            
             this.scene.switch("creditsScene");
         });
 
@@ -165,7 +166,7 @@ class Menu extends Phaser.Scene {
             this.sKeyProcessed = false;
         }
 
-        if (this.enterKey.isDown) {
+        if(game.input.activePointer.leftButtonDown()){
             if (!this.enterKeyProcessed) {
                 this.sound.play("enter");
                 this.confirmSelection();
