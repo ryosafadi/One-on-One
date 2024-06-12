@@ -14,7 +14,7 @@ Controls:
 - Menu Controls
     - Press 'W' to move cursor up
     - Press 'S' to move cursor down
-    - Press 'ENTER' to confirm selection or to go back
+    - Press 'SPACEBAR' to confirm selection or to go back
 - Gameplay Controls
     - Use 'WASD' for movement
     - Use your mouse to aim your attacks
