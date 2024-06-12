@@ -18,7 +18,7 @@ let config = {
     },
     width: 800,
     height: 800,
-    scene: [Load, Game]
+    scene: [Load, Menu, Game, Credits, Controls, GameOver, GameWin]
 }
 
 var my = {sprite: {}, text: {}};

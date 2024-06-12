@@ -28,6 +28,12 @@ class Load extends Phaser.Scene {
         this.load.audio('impsound', 'impsound.ogg');
 
         this.load.bitmapFont("pixellari", "pixellari.png", "pixellari.fnt");
+
+        // Menu assets
+        this.load.image("optionBox", "optionBox1.png");
+        this.load.image("cursor", "cursor1.png");
+        this.load.audio("select", "select_001.ogg");
+        this.load.audio("enter", "select_008.ogg");
         
 
         // Load tilemap information
@@ -103,7 +109,7 @@ class Load extends Phaser.Scene {
             repeat: 0,
         });*/
         // ...and pass to the next Scene
-        this.scene.start("gameScene");
+        this.scene.start("menuScene");
     }
 
     // Never get here since a new scene is started in create()

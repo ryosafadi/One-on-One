@@ -181,6 +181,18 @@ class Game extends Phaser.Scene {
             this.playerAttack();
         }
 
+        // Check for player health
+        if (this.playerHealth <= 0) {
+            this.scene.stop("gameScene");
+            this.scene.start("gameOverScene");
+        }
+
+        // Check for boss health
+        if (this.bossHealth <= 0) {
+            this.scene.stop("gameScene");
+            this.scene.start("gameWinScene");
+        }
+
         this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
     }
 
