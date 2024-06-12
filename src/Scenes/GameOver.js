@@ -28,7 +28,7 @@ class GameOver extends Phaser.Scene{
         this.add.bitmapText(width / 2, 50, "pixellari", "You Died!", 48).setOrigin(0.5);
 
         // Register 'ENTER' key
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Cursor
         this.buttonSelector = this.add.image(0, 0, 'cursor');
@@ -76,7 +76,7 @@ class GameOver extends Phaser.Scene{
 
     update(){
 
-        if(game.input.activePointer.leftButtonDown()){
+        if (this.enterKey.isDown) {
             this.sound.play("enter");
             this.scene.start("menuScene");
         }

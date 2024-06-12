@@ -27,7 +27,7 @@ class Menu extends Phaser.Scene {
         // Define keyboard input keys
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         // Cursor
         this.buttonSelector = this.add.image(0, 0, 'cursor');
 
@@ -167,7 +167,7 @@ class Menu extends Phaser.Scene {
             this.sKeyProcessed = false;
         }
 
-        if(game.input.activePointer.leftButtonDown()){
+        if (this.enterKey.isDown) {
             if (!this.enterKeyProcessed) {
                 this.sound.play("enter");
                 this.enterKeyProcessed = true;

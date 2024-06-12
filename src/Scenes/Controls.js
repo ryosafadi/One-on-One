@@ -25,7 +25,7 @@ class Controls extends Phaser.Scene{
         const { width, height } = this.scale;
 
         // Add control instructions
-        const menuControlsText = "Menu Controls:\n- Press 'W' to move cursor up\n- Press 'S' to move cursor down\n- Press 'ENTER' to confirm selection or to go back\n\nGameplay Controls:\n- Use 'WASD' for movement\n- Use your mouse to aim your attacks\n- 'LEFT CLICK' to attack";
+        const menuControlsText = "Menu Controls:\n- Press 'W' to move cursor up\n- Press 'S' to move cursor down\n- Press 'SPACE' to confirm selection or to go back\n\nGameplay Controls:\n- Use 'WASD' for movement\n- Use your mouse to aim your attacks\n- 'LEFT CLICK' to attack";
 
         // Create controls text
         this.add.bitmapText(width / 2, height / 2 - 50, "pixellari", menuControlsText, 24).setOrigin(0.5);
@@ -35,7 +35,7 @@ class Controls extends Phaser.Scene{
         titleText.setFontSize(48); // Set font size to 48 pixels
 
         // Register 'ENTER' key
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Cursor
         this.buttonSelector = this.add.image(0, 0, 'cursor');
@@ -92,7 +92,7 @@ class Controls extends Phaser.Scene{
 
     update(){
 
-        if(game.input.activePointer.leftButtonDown()){
+        if (this.enterKey.isDown) {
             if (!this.enterKeyProcessed) {
                 this.sound.play("enter");
                 this.confirmSelection();

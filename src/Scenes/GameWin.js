@@ -24,7 +24,7 @@ class GameWin extends Phaser.Scene{
     create() {
         const { width, height } = this.scale;
 
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Cursor
         this.buttonSelector = this.add.image(0, 0, 'cursor');
@@ -85,7 +85,7 @@ class GameWin extends Phaser.Scene{
 
     update(){
 
-        if(game.input.activePointer.leftButtonDown()){
+        if (this.enterKey.isDown) {
             this.sound.play("enter");
             this.scene.start("menuScene");
         }
