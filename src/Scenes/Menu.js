@@ -79,6 +79,7 @@ class Menu extends Phaser.Scene {
         // Each button goes to a different scene
         playButton.on('selected', () => {
             console.log('play'); // Debug
+            this.scene.stop("menuScene");
             this.scene.start("gameScene");
         });
 
