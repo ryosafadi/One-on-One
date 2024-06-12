@@ -119,6 +119,7 @@ class Game extends Phaser.Scene {
         });
         // this is a pretty basic collision handler
         this.physics.add.overlap(my.sprite.player, this.bullets, this.handlePlayerHit, null, this);
+        this.physics.add.overlap(this.turret, my.sprite.slash, this.handleBossHit, null, this);
     }
     update(time, delta) {
         this.slashCooldown -= delta;
@@ -172,19 +173,7 @@ class Game extends Phaser.Scene {
         }
 
         if(game.input.activePointer.leftButtonDown()){
-            if(this.slashCooldown <= 0){
-                my.sprite.player.play("attack");
-                my.sprite.player.on('animationcomplete', () => {
-                    my.sprite.player.play("idleAnim");
-                }, this);
-
-                this.slashCooldown = 600;
-                this.slashTime = 300;
-                my.sprite.slash.setPosition(my.sprite.player.x, my.sprite.player.y);
-                my.sprite.slash.setRotation(this.slashAngle - Math.PI/2);
-                my.sprite.slash.setVisible(true);
-                my.sprite.slash.setVelocity(Math.cos(this.slashAngle) * 200, Math.sin(this.slashAngle) * 200);
-            }
+            this.playerAttack();
         }
 
         this.hitOverlay.setPosition(my.sprite.player.x, my.sprite.player.y);
@@ -268,10 +257,25 @@ class Game extends Phaser.Scene {
     }
 
     playerAttack(){
+    if(this.slashCooldown <= 0){
+            my.sprite.player.play("attack");
+            my.sprite.player.on('animationcomplete', () => {
+                my.sprite.player.play("idleAnim");
+            }, this);
 
+            this.slashCooldown = 600;
+            this.slashTime = 300;
+            my.sprite.slash.setPosition(my.sprite.player.x, my.sprite.player.y);
+            my.sprite.slash.setRotation(this.slashAngle - Math.PI/2);
+            my.sprite.slash.setVisible(true);
+            my.sprite.slash.setVelocity(Math.cos(this.slashAngle) * 200, Math.sin(this.slashAngle) * 200);
+    }
     }
 
     handleBossHit(){
-
+        my.sprite.slash.setPosition(-300, -300);
+        my.sprite.slash.setVisible(false);
+        my.sprite.slash.setVelocity(0);
+        this.bossHealth -= 1;
     }
 }
