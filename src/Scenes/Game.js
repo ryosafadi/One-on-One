@@ -198,8 +198,7 @@ class Game extends Phaser.Scene {
         const wiggleFreq = 0.02; // Frequency of the wiggle
         const wobble = Math.sin(this.time.now * 0.03) * 4;
         const shrinkRate = 0.01; // Rate at which the radius shrinks per millisecond
-        
-        // Initialize radius and startTime if they don't exist
+ 
         if (typeof this.radius === 'undefined') {
             this.radius = 100;
         }
@@ -207,7 +206,6 @@ class Game extends Phaser.Scene {
             this.startTime = this.time.now;
         }
         
-        // Gradually shrink the radius if the boss health is below 75
         if (this.bossHealth < 75) {
             const elapsedTime = this.time.now - this.startTime;
             this.radius = Math.max(radiusMin, 100 - (elapsedTime * shrinkRate));
