@@ -38,7 +38,7 @@ class GameWin extends Phaser.Scene{
         thankYouText.setFontSize(24); // Set font size to 24 pixels
 
         // Add contributors information
-        const creditsText = "Asset Packs Used:\n- Kenny Assets\n\nContributors:\n- Ryo Safadi\n- Mitchell Tai\n- Patrick James Alcantara";
+        const creditsText = "Contributors:\n- Ryo Safadi\n- Mitchell Tai\n- Patrick James Alcantara";
         this.add.bitmapText(game.config.width / 2, game.config.height / 2, "pixellari", creditsText, 32).setOrigin(0.5);
 
         // Define button dimensions

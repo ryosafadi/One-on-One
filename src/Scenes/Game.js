@@ -20,7 +20,7 @@ class Game extends Phaser.Scene {
         this.internalTime = 0;
 
         this.playerHitDamage = 10;
-        this.bossHitDamage = 5;
+        this.bossHitDamage = 1;
         this.hasFlashed = false;
         this.startPhase = false;
     }
@@ -240,7 +240,7 @@ class Game extends Phaser.Scene {
             this.radius = Math.max(radiusMin, 100 - (elapsedTime * shrinkRate));
         }
         
-        if(this.bossHealth >= 25){
+        if(this.bossHealth > 25){
             this.turret.x = this.turret.originalX - this.radius * Math.cos(angle);
             this.turret.y = this.turret.originalY - this.radius * Math.sin(angle);
         }
