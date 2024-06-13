@@ -279,7 +279,7 @@ class Game extends Phaser.Scene {
             {
             coneAngle= Phaser.Math.DegToRad(300);
             sets = 1;
-            bulletsPerSet = 40;
+            bulletsPerSet = 30;
             }
         for (let set = 0; set < sets; set++) {
             this.time.delayedCall(set * delayBetweenSets, () => {
