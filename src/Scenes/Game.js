@@ -18,7 +18,7 @@ class Game extends Phaser.Scene {
         this.target = new Phaser.Math.Vector2();
 
         this.playerHitDamage = 10;
-        this.bossHitDamage = 10;
+        this.bossHitDamage = 1;
         this.hasFlashed = false;
         this.startPhase = false;
     }
@@ -98,7 +98,7 @@ class Game extends Phaser.Scene {
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-        this.turret = this.physics.add.sprite(200, 190, 'turret');
+        this.turret = this.physics.add.sprite(200, 200, 'turret');
         this.turret.setScale(5);
         this.turret.originalX = this.turret.x; // Store the original position
         this.turret.originalY = this.turret.y;
@@ -223,16 +223,18 @@ class Game extends Phaser.Scene {
             this.startTime = this.time.now;
         }
         
-        if (this.bossHealth < 75 ) {
+        if (this.bossHealth < 75 && this.bossHealth > 25) {
             this.time.removeEvent(this.BossAttackTimer);
             const elapsedTime = this.time.now - this.startTime;
             this.radius = Math.max(radiusMin, 100 - (elapsedTime * shrinkRate));
         }
         
-        this.turret.x = this.turret.originalX - this.radius * Math.cos(angle);
-        this.turret.y = this.turret.originalY - this.radius * Math.sin(angle);
+        if(this.bossHealth >= 25){
+            this.turret.x = this.turret.originalX - this.radius * Math.cos(angle);
+            this.turret.y = this.turret.originalY - this.radius * Math.sin(angle);
+        }
     
-        if (this.bossHealth < 75) {
+        if (this.bossHealth < 75 && this.bossHealth > 25) {
             this.turret.x += wobble;
             this.turret.y += wobble;
             if(this.hasFlashed == false){
@@ -248,6 +250,17 @@ class Game extends Phaser.Scene {
                 }, this);
             }
         }
+
+        if(this.bossHealth <= 25){
+            this.time.removeEvent(this.Phase2AtackTimer);
+
+            this.BossPhaseThreeTimer = this.time.addEvent({
+                delay: 2000,
+                callback: this.bossDashAttack,
+                callbackScope: this,
+                loop: true
+            });
+        }
         
         this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
     }
@@ -259,7 +272,7 @@ class Game extends Phaser.Scene {
         let sets = 3;
         let bulletsPerSet = 5;
         let delayBetweenSets = 400; 
-        if (this.bossHealth<75)
+        if (this.bossHealth < 75)
             {
             coneAngle= Phaser.Math.DegToRad(300);
             sets = 1;
@@ -270,7 +283,7 @@ class Game extends Phaser.Scene {
                 for (let i = 0; i < bulletsPerSet; i++) {
                     //const rawAngle = Phaser.Math.Angle.Between(this.turret.x, this.turret.y, my.sprite.player.x, my.sprite.player.y);
                     let angle = this.rawAngle + Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2);
-                    if (this.bossHealth<75)
+                    if (this.bossHealth < 75)
                         {
                             angle = Phaser.Math.DegToRad(Phaser.Math.Between(0, 360)+ Phaser.Math.FloatBetween(-coneAngle / 2, coneAngle / 2));
                         }
@@ -297,6 +310,15 @@ class Game extends Phaser.Scene {
                 }
             }, this);
         }
+    }
+
+    bossDashAttack(){
+        //this.time.removeEvent(this.BossPhaseOneTimer);
+        //this.turret.rotation = 0;
+        let currentX = my.sprite.player.x;
+        let currentY = my.sprite.player.y;
+
+        this.physics.moveTo(this.turret, currentX, currentY, 50);
     }
 
     //for some reason this player hit handler will delete the player if i
