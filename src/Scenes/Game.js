@@ -191,6 +191,7 @@ class Game extends Phaser.Scene {
         // Check for player health
         if (this.playerHealth <= 0) {
             this.loseSound.play();
+            this.internalTime=0;
             this.scene.stop("gameScene");
             this.scene.start("gameOverScene");
         }
@@ -198,6 +199,7 @@ class Game extends Phaser.Scene {
         // Check for boss health
         if (this.bossHealth <= 0) {
             this.winSound.play();
+            this.internalTime=0;
             this.scene.stop("gameScene");
             this.scene.start("gameWinScene");
         }
