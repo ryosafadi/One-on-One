@@ -21,6 +21,13 @@ class Menu extends Phaser.Scene {
 
     create() {
         const { width, height } = this.scale;
+        if (!this.sound.get('backgroundMusic')) {
+            this.backgroundMusic = this.sound.add('backgroundMusic', {
+                loop: true,
+                volume: 0.3
+            });
+            this.backgroundMusic.play();
+        }
 
         console.log("I'm back"); //debug
 
