@@ -17,6 +17,8 @@ class Game extends Phaser.Scene {
         this.slashTime = 0;
         this.target = new Phaser.Math.Vector2();
 
+        this.internalTime = 0;
+
         this.playerHitDamage = 10;
         this.bossHitDamage = 1;
         this.hasFlashed = false;
@@ -127,6 +129,7 @@ class Game extends Phaser.Scene {
         this.physics.add.overlap(this.turret, my.sprite.slash, this.handleBossHit, null, this);
     }
     update(time, delta) {
+        this.internalTime += delta;
         this.slashCooldown -= delta;
         this.slashTime -= delta;
         if(this.slashTime <= 0){
@@ -210,22 +213,22 @@ class Game extends Phaser.Scene {
     moveBossCircle() {
         const radiusMin = 0; // Minimum radius limit
         const speed = 0.0005; // Speed of the turret circle
-        const angle = this.time.now * speed;
+        const angle = this.internalTime * speed;
         const wiggleAmp = 0.1; // Amplitude of the wiggle
         const wiggleFreq = 0.02; // Frequency of the wiggle
-        const wobble = Math.sin(this.time.now * 0.03) * 4;
+        const wobble = Math.sin(this.internalTime * 0.03) * 4;
         const shrinkRate = 0.1; // Rate at which the radius shrinks per millisecond
  
-        if (typeof this.radius === 'undefined') {
+        if ((typeof this.radius === 'undefined')||this.bossHealth==100) {
             this.radius = 100;
         }
-        if (typeof this.startTime === 'undefined' && this.bossHealth < 75) {
-            this.startTime = this.time.now;
+        if ((typeof this.startTime === 'undefined' && this.bossHealth < 75)) {
+            this.startTime = this.internalTime;
         }
         
         if (this.bossHealth < 75 && this.bossHealth > 25) {
             this.time.removeEvent(this.BossAttackTimer);
-            const elapsedTime = this.time.now - this.startTime;
+            let elapsedTime = this.internalTime - this.startTime;
             this.radius = Math.max(radiusMin, 100 - (elapsedTime * shrinkRate));
         }
         
@@ -262,7 +265,7 @@ class Game extends Phaser.Scene {
             });
         }
         
-        this.turret.rotation = Math.sin(this.time.now * wiggleFreq) * wiggleAmp;
+        this.turret.rotation = Math.sin(this.internalTime * wiggleFreq) * wiggleAmp;
     }
 
     //for the turret, can be copied for other things.
