@@ -20,7 +20,7 @@ class Game extends Phaser.Scene {
         this.internalTime = 0;
 
         this.playerHitDamage = 10;
-        this.bossHitDamage = 1;
+        this.bossHitDamage = 5;
         this.hasFlashed = false;
         this.startPhase = false;
     }
@@ -46,6 +46,7 @@ class Game extends Phaser.Scene {
         this.hitOverlay.setVisible(false);
         this.hitSound = this.sound.add('hit');
         this.loseSound = this.sound.add('lose');
+        this.winSound = this.sound.add('win');
         this.bossHitSound = this.sound.add('boss');
         this.attackSound = this.sound.add('attack');
 
@@ -196,6 +197,7 @@ class Game extends Phaser.Scene {
 
         // Check for boss health
         if (this.bossHealth <= 0) {
+            this.winSound.play();
             this.scene.stop("gameScene");
             this.scene.start("gameWinScene");
         }

@@ -30,6 +30,7 @@ class Load extends Phaser.Scene {
         this.load.audio('boss', 'bosshitsound.wav');
         this.load.audio('hit', 'hitsound.wav');
         this.load.audio('attack', 'wave.wav');
+        this.load.audio('win', 'mixkit-small-win-2020.wav');
 
         this.load.bitmapFont("pixellari", "pixellari.png", "pixellari.fnt");
 
