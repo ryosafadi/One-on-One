@@ -26,6 +26,10 @@ class Load extends Phaser.Scene {
         this.load.image("heartOuter", "heartOuter.png");
         this.load.image("heartInner", "heartInner.png");
         this.load.audio('impsound', 'impsound.ogg');
+        this.load.audio('lose', 'losesound.wav');
+        this.load.audio('boss', 'bosshitsound.wav');
+        this.load.audio('hit', 'hitsound.wav');
+        this.load.audio('attack', 'wave.wav');
 
         this.load.bitmapFont("pixellari", "pixellari.png", "pixellari.fnt");
 

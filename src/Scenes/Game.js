@@ -44,7 +44,10 @@ class Game extends Phaser.Scene {
 
         this.hitOverlay = this.add.sprite(this.playerX, this.playerY, 'hit1');
         this.hitOverlay.setVisible(false);
-        this.hitSound = this.sound.add('impsound');
+        this.hitSound = this.sound.add('hit');
+        this.loseSound = this.sound.add('lose');
+        this.bossHitSound = this.sound.add('boss');
+        this.attackSound = this.sound.add('attack');
 
         this.playerX = this.map.widthInPixels / 2;
         this.playerY = 3 * this.map.heightInPixels / 4;
@@ -186,6 +189,7 @@ class Game extends Phaser.Scene {
 
         // Check for player health
         if (this.playerHealth <= 0) {
+            this.loseSound.play();
             this.scene.stop("gameScene");
             this.scene.start("gameOverScene");
         }
@@ -343,6 +347,7 @@ class Game extends Phaser.Scene {
 
     playerAttack(){
         if(this.slashCooldown <= 0){
+            this.attackSound.play();
             my.sprite.player.play("attack");
             my.sprite.player.on('animationcomplete', () => {
                 my.sprite.player.play("idleAnim");
@@ -361,6 +366,7 @@ class Game extends Phaser.Scene {
         my.sprite.slash.setPosition(-300, -300);
         my.sprite.slash.setVisible(false);
         my.sprite.slash.setVelocity(0);
+        this.bossHitSound.play();
         this.bossHealth -= this.bossHitDamage;
     }
 }
