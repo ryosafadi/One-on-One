@@ -230,7 +230,7 @@ class Game extends Phaser.Scene {
         if ((typeof this.radius === 'undefined')||this.bossHealth==100) {
             this.radius = 100;
         }
-        if ((typeof this.startTime === 'undefined' && this.bossHealth < 75)) {
+        if ((typeof this.startTime === 'undefined' && this.bossHealth < 75)||this.bossHealth==75) {
             this.startTime = this.internalTime;
         }
         
